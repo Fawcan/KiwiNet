@@ -1,19 +1,56 @@
 ﻿using KiwiNet.Core.Math;
-using KiwiNet.InstanceServer.Objects;
+using KiwiNet.InstanceServer.Areas;
 using KiwiNet.InstanceServer.Items;
 using KiwiNet.InstanceServer.Network;
+using KiwiNet.InstanceServer.Objects;
 using KiwiNet.InstanceServer.Resources;
+using KiwiNet.InstanceServer.Resources.Tables;
 using KiwiNet.InstanceServer.WorldObjects;
 using KiwiNet.InstanceServer.WorldObjects.Components;
 using KiwiNet.Protocols.Instance;
-using KiwiNet.InstanceServer.Areas;
 
 namespace KiwiNet.InstanceServer.Commands.Implementations
 {
-#if DEBUG
     [CommandGroup]
     public static class CheatCommands
     {
+        [CommandHandler("areachange")]
+        public static string AreaChange(object invoker, ReadOnlySpan<string> args)
+        {
+            if (invoker is not RemotePlayer remotePlayer)
+                return "This command must be invoked in-game.";
+
+            if (args.Length == 0)
+                return "Please provide a valid world area id";
+
+            string worldAreaId = args[0];
+            using ResourceHandle<WorldAreas> worldAreas = ResourceManager.Get<WorldAreas>("Data/WorldAreas.dat");
+            if (worldAreas.Resource.GetDataRowByKey(worldAreaId) == null)
+                return $"'{worldAreaId}' is not a valid world area id.";
+
+            Vector2Int startPosition = default;
+            if (args.Length >= 3)
+            {
+                if (int.TryParse(args[1], out int x) == false)
+                    return $"Failed to parse '{args[1]}' as an x coordinate.";
+
+                if (x < 0)
+                    return $"x coordinate must be positive.";
+
+                if (int.TryParse(args[2], out int y) == false)
+                    return $"Failed to parse '{args[2]}' as a y coordinate.";
+
+                if (y < 0)
+                    return "y coordinate must be positive.";
+
+                startPosition = new(x, y);
+            }
+
+            remotePlayer.BeginAreaTransfer(worldAreaId, startPosition);
+
+            return string.Empty;
+        }
+
         [CommandHandler("item")]
         public static string Item(object invoker, ReadOnlySpan<string> args)
         {
@@ -94,5 +131,4 @@ namespace KiwiNet.InstanceServer.Commands.Implementations
             return string.Empty;
         }
     }
-#endif
 }
