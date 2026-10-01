@@ -47,3 +47,14 @@ These instructions are for Windows.
 4. Enter `localhost` in the Realm field on the login screen.
 
 5. Log in with any email and password. An account is automatically created when you log in for the first time with a specific email.
+
+## Chat Commands
+
+These commands should be entered in the in-game chat box. Lists of areas / items / monsters can be found in the `Data` folder extracted from the client's GGPK archive.
+
+| Command                  | Description                                        | List File           |
+| ------------------------ | -------------------------------------------------- | ------------------- |
+| /areachange AreaName X Y | Teleports to an area at the specified coordinates. | `WorldAreas.csv`    |
+| /item ItemName           | Drops an item.                                     | `BaseItemTypes.csv` |
+| /monster MonsterName     | Spawns a monster.                                  | `MonsterList.csv`   |
+| /addexp Amount           | Adds the specified amount of experience.           | -                   |
